@@ -18,13 +18,12 @@
             'is-size-7-mobile': item.small_font_on_small_screens,
             'is-small': item.small_font_on_desktop,
           }">
-            <span class="margined">{{ type == "lxc" ? "LXC-Id" : "VM-Id"}}:
+            <span class="margined">
               <span v-if="data.status === 'stopped'" class="danger">Stopped</span>
-              <span v-if="data.status === 'running'" class="has-text-weight-bold">{{ data.vmid }}</span>
             </span>
             <span v-if="data.cpu && isValueShown('cpu')" class="margined">CPU: 
-              <span class="has-text-weight-bold" :class="statusClass(data.cpu)">
-                {{ (data.cpu * 100).toFixed(1)}}%
+              <span class="has-text-weight-bold" :class="statusClass(cpuUsed)">
+                {{ cpuUsed }}%
               </span>
             </span>
             <span v-if="data.mem && isValueShown('mem')" class="margined">Mem: 
@@ -37,7 +36,7 @@
 
               </span>
             </span>
-            <span v-if="data.uptime && isValueShown('uptime')" class="margined">Uptime: 
+            <span v-if="data.uptime && isValueShown('uptime')" class="margined is-hidden-mobile">Uptime:
               <span class="has-text-weight-bold">
                 {{ uptimeFormatted }}
 
@@ -71,6 +70,8 @@ export default {
     data: null,
     memoryUsed: 0,
     diskUsed: 0,
+    cpuUsed: 0,
+    hide: [],
     uptimeFormatted: 0,
     type: "",
     instance_id: "",
@@ -80,6 +81,7 @@ export default {
     loading: true,
   }),
   created() {
+    if (this.item.hide) this.hide = this.item.hide;
     if (this.item.vm_id && this.item.lxc_id) {
       console.error("You cannot use `vm_id` and `lxc_id` at the same time");
       this.error = true;
@@ -122,12 +124,16 @@ export default {
           `/api2/json/nodes/${this.item.node}/${this.type}/${this.instance_id}/status/current`,
           options
         );
+        const decimalsToShow = this.item.hide_decimals ? 0 : 1;
         this.data = lxc_qemu.data;
-        this.memoryUsed = ((this.data.mem * 100) / this.data.maxmem).toFixed(1);
+        this.memoryUsed = ((
+          this.data.mem * 100) / 
+          this.data.maxmem).toFixed(decimalsToShow);
         if (this.data.blockstat && this.data.blockstat.scsi0) {
           const usedDiskSpace = this.data.blockstat.scsi0.wr_highest_offset;
-          this.diskUsed = ((usedDiskSpace * 100) / this.data.maxdisk).toFixed(1);
+          this.diskUsed = ((usedDiskSpace * 100) / this.data.maxdisk).toFixed(decimalsToShow);
         }
+        this.cpuUsed = (this.data.cpu * 100).toFixed(decimalsToShow);
         this.uptimeFormatted = this.formatUptime(this.data.uptime);
         this.error = false;
       } catch (err) {
@@ -137,7 +143,7 @@ export default {
       this.loading = false;
     },
     isValueShown(value) {
-      return this.item.hide.indexOf(value) == -1;
+      return this.hide.indexOf(value) == -1;
     },
   },
 };
