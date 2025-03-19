@@ -224,7 +224,7 @@ export default {
 
       document.title =
         this.config.documentTitle ||
-        `${this.config.title} | ${this.config.subtitle}`;
+        `${this.config.title}`;
       if (this.config.stylesheet) {
         let stylesheet = "";
         let addtionnal_styles = this.config.stylesheet;
