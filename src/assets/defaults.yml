@@ -1,79 +1,27 @@
 ---
+# Default configuration
+
 title: "Dashboard"
-# subtitle: "Tous mes services accessibles"
-# icon: "fas fa-cloud"
+subtitle: "Homer"
 
-header: false
-footer: false
-# stylesheet:
-  # - "assets/custom.css"
+header: true
+footer: '<p>Created with <span class="has-text-danger">❤️</span> with <a href="https://bulma.io/">bulma</a>, <a href="https://vuejs.org/">vuejs</a> & <a href="https://fontawesome.com/">font awesome</a> // Fork me on <a href="https://github.com/bastienwirtz/homer"><i class="fab fa-github-alt"></i></a></p>' # set false if you want to hide it.
 
-columns: "2" # You can change this to any number that is a factor of 12: (1, 2, 3, 4, 6, 12)
+columns: 3
+connectivityCheck: true
+
+defaults:
+  # columns, list
+  layout: columns
+  # auto, light, dark
+  colorTheme: auto
+
 theme: default
-statusCheck: true
-colors:
-  light:
-    highlight-primary: "#fff5f2"
-    highlight-secondary: "#fff5f2"
-    highlight-hover: "#bebebe"
-    background: "#12152B"
-    card-background: "rgba(255, 245, 242, 0.8)"
-    text: "#ffffff"
-    text-header: "#fafafa"
-    text-title: "#000000"
-    text-subtitle: "#111111"
-    card-shadow: rgba(0, 0, 0, 0.5)
-    link: "#3273dc"
-    link-hover: "#2e4053"
-    background-image: "../assets/light/11-0-Day.jpg" # Change wallpaper.jpeg to the name of your own custom wallpaper!
-    # background-image: "../assets/wallpaper-light.jpeg" # Change wallpaper.jpeg to the name of your own custom wallpaper!
-  dark:
-    highlight-primary: "#c11616"
-    highlight-secondary: "#c11616"
-    highlight-hover: "#1F2347"
-    background: "#12152B"
-    card-background: "rgba(24, 28, 58, 0.8)"
-    text: "#eaeaea"
-    text-header: "#7C71DD"
-    text-title: "#fafafa"
-    text-subtitle: "#8B8D9C"
-    card-shadow: rgba(0, 0, 0, 0.5)
-    link: "#c1c1c1"
-    link-hover: "#fafafa"
-    background-image: "../assets/dark/11-0-Night.jpg" # Change wallpaper.jpeg to the name of your own custom wallpaper!
-    # background-image: "../assets/wallpaper.jpeg"
+colors: ~
 
-services:
-  - name: "Admin"
-    icon: "fas fa-cogs"
-    items:
-      - name: "Proxmox"
-        url: "https://proxmox.thibaut-husser.com"
-        node: "big-brother"
-        type: "Proxmox"
-        api_token: "PVEAPIToken=homer@pam!audit=7f64293a-8d77-4d0a-9071-b1c0c8e9aeb1"
-        warning_value: 50
-        danger_value: 80
-        hide: []
-        small_font_on_desktop: false
-        small_font_on_small_screens: true # uses small font on small screens (like mobile)
-        target: "_blank"
-      - name: "Homeassistant"
-        type: "ProxmoxVM"
-        node: "big-brother"
-        url: "https://proxmox.thibaut-husser.com"
-        api_token: "PVEAPIToken=homer@pam!audit=7f64293a-8d77-4d0a-9071-b1c0c8e9aeb1"
-        vm_id: "113"  # L'ID de la VM que tu veux surveiller
-        hide: []
-        small_font_on_small_screens: true # uses small font on small screens (like mobile)
-        small_font_on_desktop: false
-      - name: "DnsMask"
-        type: "ProxmoxVM"
-        node: "big-brother"
-        url: "https://proxmox.thibaut-husser.com"
-        api_token: "PVEAPIToken=homer@pam!audit=7f64293a-8d77-4d0a-9071-b1c0c8e9aeb1"
-        lxc_id: "201"  # L'ID de la VM que tu veux surveiller
-        hide: []
-        small_font_on_small_screens: true # uses small font on small screens (like mobile)
-        small_font_on_desktop: false
+message: ~
+links: []
+services: []
 
+
+proxy: ~
