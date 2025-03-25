@@ -10,26 +10,29 @@
 			<div v-else-if="error">
 			  <strong class="danger">Erreur de chargement</strong>
 			</div>
-			<div v-else class="metrics">
+			<div v-else class="metrics" :class="{
+            'is-size-7-mobile': item.small_font_on_small_screens,
+            'is-small': item.small_font_on_desktop,
+          }">
 			  <span class="margined danger" v-if="data.status !== 'running'">Stopped</span>
 
-			  <span v-if="data.cpu_percent" class="margined">CPU:
+			  <span v-if="data.cpu_percent && isValueShown('cpu')" class="margined">CPU:
 				<span :class="statusClass(data.cpu_percent)">
 				  {{ data.cpu_percent }}%
 				</span>
 			  </span>
 
-			  <span v-if="data.memory" class="margined">Mem:
+			  <span v-if="data.memory && isValueShown('mem')" class="margined">Mem:
 				<span :class="statusClass(data.memory.percent)">
 				  {{ data.memory.percent }}%
 				</span>
 				/ {{ Math.ceil(data.memory.limit_mb / 1000) }} GB
 			  </span>
 
-			  <span v-if="data.uptime" class="margined is-hidden-mobile">
+			  <span v-if="data.uptime && isValueShown('uptime')" class="margined is-hidden-mobile">
 				Uptime: <strong>{{ data.uptime }}</strong>
 			  </span>
-			  <span v-if="data.restart" class="margined is-hidden-mobile">
+			  <span v-if="data.restart && isValueShown('restart')" class="margined is-hidden-mobile">
 				Restart: <strong>{{ data.restart }}</strong>
 			  </span>
 			</div>
@@ -57,14 +60,20 @@
 	  data: null,
 	  error: false,
 	  loading: true,
+	  hide: [],				// cpu, mem, uptime, restart
+	  warning_value : 50,
+	  danger_value: 80,
 	}),
 	created() {
-	  this.fetchData();
+		if (this.item.hide) this.hide = this.item.hide;
+		this.warning_value = this.item.warning_value || this.warning_value;
+		this.danger_value = this.item.danger_value || this.danger_value;
+		this.fetchData();
 	},
 	methods: {
 		statusClass(value) {
-			if (value > 80) return "danger";
-			if (value > 50) return "warning";
+			if (value > this.danger_value) return "danger";
+			if (value > this.warning_value) return "warning";
 			return "healthy";
 		},
 		async fetchData() {
@@ -81,9 +90,8 @@
 				if (Array.isArray(containers) && containers.length > 0) {
 					this.data = containers[0];
 					this.item.host = host;
-					console.log(this.data);
-					console.log(this.item.host);
-
+					// console.log(this.data);
+					// console.log(this.item.host);
 					break;
 				}
 			}
@@ -97,6 +105,9 @@
 			this.error = true;
 			this.loading = false;
 		}
+		},
+		isValueShown(value) {
+			return this.hide.indexOf(value) == -1;
 		},
 	},
   };
