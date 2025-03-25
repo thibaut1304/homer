@@ -33,7 +33,7 @@
 				Uptime: <strong>{{ data.uptime }}</strong>
 			  </span>
 			  <span v-if="data.restart && isValueShown('restart')" class="margined is-hidden-mobile">
-				Restart: <strong>{{ data.restart }}</strong>
+				Restart: <strong>{{ data.restarts }}</strong>
 			  </span>
 			</div>
 		  </template>
