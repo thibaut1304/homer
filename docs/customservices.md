@@ -15,6 +15,7 @@ within Homer:
 - [AdGuard Home](#adguard-home)
 - [CopyToClipboard](#copy-to-clipboard)
 - [Docuseal](#docuseal)
+- [Docky](#docky)
 - [Emby / Jellyfin](#emby--jellyfin)
 - [FreshRSS](#freshrss)
 - [Gitea / Forgejo](#gitea--forgejo)
@@ -111,6 +112,26 @@ This service displays a version string instead of a subtitle. Example configurat
   type: Docuseal
   logo: assets/tools/sample.png
   url: http://docuseal.example.com
+```
+
+## Docky
+
+This service is an API endpoint that must run over https on your homelab. It is used to display various Docker container information !  
+It uses the official Docker API in Python. See -> https://thusser.com/docky  
+It is not the name that is displayed on your card but the name of the container, but you must enter the name for homer recognition  
+
+```yaml
+- name: "Traefik docky"
+  url: "https://x.x.x.x:5002"				# End point of your api services
+  type: "Docky"	
+  container: "traefik"							# name of your conainer {container_name} (docker ps) in your system
+  hide: [""]									# 
+  api_token: 'your_api_token define in .env of your api'
+  warning_value: 50 # this value was set to default
+  danger_value: 80 # this value was set to default
+  hide: [] # hides information. Possible values are "cpu", "mem", "restart" and "uptime". "uptime" and "restart" is hidden in mobile 
+  small_font_on_small_screens: true # uses small font on small screens (like mobile)
+  small_font_on_desktop: true # uses small font on desktops (just in case you're showing much info)
 ```
 
 ## Emby / Jellyfin
