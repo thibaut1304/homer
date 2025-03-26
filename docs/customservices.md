@@ -53,6 +53,7 @@ within Homer:
 - [Traefik](#traefik)
 - [TrueNas](#truenas)
 - [Uptime Kuma](#uptime-kuma)
+- [Vaultwarden](#vaultwarden)
 - [Wallabag](#wallabag)
 - [What's Up Docker](#whats-up-docker)
 
