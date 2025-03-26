@@ -50,6 +50,7 @@ within Homer:
 - [Tautulli](#tautulli)
 - [Tdarr](#tdarr)
 - [Traefik](#traefik)
+- [TrueNas](#truenas)
 - [Uptime Kuma](#uptime-kuma)
 - [Wallabag](#wallabag)
 - [What's Up Docker](#whats-up-docker)
@@ -700,6 +701,19 @@ This service displays a version string instead of a subtitle. Example configurat
 ```
 - Authentication: If BasicAuth is set, credentials will be encoded in Base64 and sent as an Authorization header (Basic <encoded_value>).
 - Format: The value must be formatted as "admin:password".
+
+## Truenas
+
+This service displays a version string instead of a subtitle. Example configuration:
+
+```yaml
+- name: Truenas
+  type: TrueNas
+  logo: assets/tools/sample.png
+  url: http://truenas.example.com
+  api_token: "your_api_token"
+```
+
 ## Uptime Kuma
 
 Using the Uptime Kuma service you can display info about your instance uptime right on your Homer dashboard.
