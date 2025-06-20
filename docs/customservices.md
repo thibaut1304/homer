@@ -16,6 +16,7 @@ within Homer:
 - [CopyToClipboard](#copy-to-clipboard)
 - [Docuseal](#docuseal)
 - [Docky](#docky)
+- [Docker Socket Proxy](#docker-socket-proxy)
 - [Emby / Jellyfin](#emby--jellyfin)
 - [FreshRSS](#freshrss)
 - [Gitea / Forgejo](#gitea--forgejo)
@@ -26,6 +27,7 @@ within Homer:
 - [Immich](#immich)
 - [Jellystat](#jellystat)
 - [Lidarr, Prowlarr, Sonarr, Readarr and Radarr](#lidarr-prowlarr-sonarr-readarr-and-radarr)
+- [Linkding](#linkding)
 - [Matrix](#matrix)
 - [Mealie](#mealie)
 - [Medusa](#medusa)
@@ -39,6 +41,7 @@ within Homer:
 - [PiAlert](#pialert)
 - [PiHole](#pihole)
 - [Ping](#ping)
+- [Plex](#plex)
 - [Portainer](#portainer)
 - [Prometheus](#prometheus)
 - [Proxmox](#proxmox)
@@ -52,6 +55,7 @@ within Homer:
 - [Tdarr](#tdarr)
 - [Traefik](#traefik)
 - [TrueNas](#truenas)
+- [TrueNas Scale](#truenas-scale)
 - [Uptime Kuma](#uptime-kuma)
 - [Vaultwarden](#vaultwarden)
 - [Wallabag](#wallabag)
@@ -104,6 +108,17 @@ Configuration example:
   url: "#"
   type: "CopyToClipboard"
   clipboard: "this text will be copied to your clipboard"
+```
+
+## Docker Socket Proxy
+
+This service display the number of running, stopped and containers that have errors.
+It calls the API of DOcker Socket Proxy
+
+```yaml
+- name: Docker
+  type: "DockerSocketProxy"
+  endpoint: "http://192.168.0.151:2375"
 ```
 
 ## Docuseal
@@ -249,7 +264,7 @@ To enable cors on HomeAssistant, edit your `configuration.yml` and add the IP of
 
 ## Immich
 
-The Immich service displays stats from your Immich server. 
+The Immich service displays stats from your Immich server.
 The Immich server must be running at least version 1.118.0 for the correct api endpoint to work.
 
 ```yaml
@@ -311,12 +326,43 @@ shows if Nextcloud is online, offline
   type: Matrix
   logo: assets/tools/sample.png
   url: http://matrix.example.com
+## Linkding
+
+This integration makes it possible to query Linkding and list multiple results from Linkding.
+Linkding has to be configured with CORS enabled. Linkding does not support that, but a reverse proxy in front can fix that.
+For example if you use Traefik, documentation about that is here: <https://doc.traefik.io/traefik/middlewares/http/headers/#cors-headers>
+Examples for various servers can be found at <https://enable-cors.org/server.html>.
+
+This integration supports at max 15 results from Linkding. But you can add it multiple times to you dashboard with different queries to retrieve what you need.
+
+```yaml
+      - name: "Linkding"
+        # Url to Linkding instance
+        url: https://ld.ceesbos.nl
+        token: "<add your secret token here>"
+        type: "Linkding"
+        # Maximum number of items returned by Linkding, minimal 1 and max 15
+        limit: 10 
+        # query to do on Linkding. Use #tagname to search for tags
+        query: "#ToDo #Homer" 
+```
+
+## Matrix
+
+This service displays a version string instead of a subtitle. The indicator
+shows if Matrix Server is online, offline
+
+```yaml
+- name: "Matrix - Server"
+  type: "Matrix"
+  logo: "assets/tools/sample.png"
+  url: "http://matrix.example.com"
 ```
 
 ## Mealie
 
-First off make sure to remove an existing `subtitle` as it will take precedence if set. 
-Setting `type: "Mealie"` will then show the number of recipes Mealie is keeping organized or the planned meal for today if one is planned. You will 
+First off make sure to remove an existing `subtitle` as it will take precedence if set.
+Setting `type: "Mealie"` will then show the number of recipes Mealie is keeping organized or the planned meal for today if one is planned. You will
 have to set an API key in the field `apikey` which can be created in your Mealie installation. The API page can be found: Click on hamburger menu -> Click on your profile -> Click on "Manage your API Tokens"
 
 ```yaml
@@ -456,12 +502,16 @@ The following configuration is available for the PiHole service.
   logo: "assets/tools/sample.png"
   # subtitle: "Network-wide Ad Blocking" # optional, if no subtitle is defined, PiHole statistics will be shown
   url: "http://192.168.0.151/admin"
+  # endpoint: "http://192.168.0.151" # optional, For v6 API, this is the base URL used to fetch Pi-hole data overwriting the url
   apikey: "<---insert-api-key-here--->" # optional, needed if web interface is password protected
   type: "PiHole"
+  apiVersion: 5 # optional, defaults to 5. Use 6 if your PiHole instance uses API v6
+  checkInterval: 3000 # optional, defaults to 300000. interval in ms to check Pi-hole status
 ```
 
 **Remarks:**
-If PiHole web interface is password protected, obtain the `apikey` from Settings > API/Web interface > Show API token.
+- If PiHole web interface is password protected, obtain the `apikey` from Settings > API/Web interface > Show API token.
+- For PiHole instances using API v6, set `apiVersion: 6` in your configuration. This enables session management and proper authentication handling.
 
 ## Ping
 
@@ -479,6 +529,19 @@ This card checks if the target link is available. All you need is to set the `ty
   # updateInterval: 5000 # (Optional) Interval (in ms) for updating ping status
 ```
 
+## Plex
+
+This card shows the current active streams and the number of movies and series that this Plex instance has.
+
+```yaml
+- name: Plex
+  type: "Plex"
+  logo: "assets/tools/sample.png"
+  token: "<---insert-plex-token-here--->" # see here how to get the plex token: https://www.plexopedia.com/plex-media-server/general/plex-token/
+  url: "http://192.168.0.151:32400/web"
+  endpoint: "http://192.168.0.151:32400"
+```
+
 ## Portainer
 
 This service displays info about the total number of containers managed by your Portainer instance.
@@ -486,6 +549,11 @@ In order to use it, you must be using Portainer version 1.11 or later. Generate 
 it to the apikey field.
 By default, every connected environments will be checked. To select specific ones, add an "environments" entry which can be a simple string or an array containing all the selected environments name.
 ### New features:
+Displays the Portainer version from /api/status  
+Shows online/offline status depending on API reachability  
+
+### New features
+
 Displays the Portainer version from /api/status  
 Shows online/offline status depending on API reachability  
 
@@ -520,10 +588,10 @@ This service displays status information of a Proxmox node (VMs running and disk
 
 The API Token (or the user assigned to that token if not separated permissions is checked) are this:
 
-| Path               | Permission | Comments                                                          |
-|--------------------|------------|-------------------------------------------------------------------|
-| /nodes/<your-node> | Sys.Audit  |                                                                   |
-| /vms/<id-vm>       | VM.Audit   | You need to have this permission on any VM you want to be counted |
+| Path                | Permission | Comments                                                          |
+|---------------------|------------|-------------------------------------------------------------------|
+| /nodes/\<your-node> | Sys.Audit  |                                                                   |
+| /vms/\<id-vm>       | VM.Audit   | You need to have this permission on any VM you want to be counted |
 
 It is highly recommended that you create and API Token with only these permissions on a read-only mode.
 
@@ -609,7 +677,7 @@ listed in rTorrent. The service communicates with the rTorrent XML-RPC interface
 to be accessible from the browser. Please consult
 [the instructions](https://github.com/rakshasa/rtorrent-doc/blob/master/RPC-Setup-XMLRPC.md)
 for setting up rTorrent and make sure the correct CORS-settings are applied. Examples for various
-servers can be found at https://enable-cors.org/server.html.
+servers can be found at <https://enable-cors.org/server.html>.
 
 ```yaml
 - name: "rTorrent"
@@ -731,6 +799,18 @@ This service displays a version string instead of a subtitle. Example configurat
   api_token: "your_api_token"
 ```
 
+## Truenas Scale
+
+This service displays a version string instead of a subtitle. Example configuration:
+
+```yaml
+- name: "Truenas"
+  type: "TruenasScale"
+  logo: "assets/tools/sample.png"
+  url: "http://truenas.example.com"
+  api_token: "your_api_token"
+```
+
 ## Uptime Kuma
 
 Using the Uptime Kuma service you can display info about your instance uptime right on your Homer dashboard.
@@ -749,13 +829,13 @@ The following configuration is available for the UptimeKuma service. Needs v1.13
 ## Vaultwarden
 
 This service displays a version string instead of a subtitle. The indicator
-shows if Nextcloud is online, offline
+shows if Vaultwarden is online, offline
 
 ```yaml
-- name: Vaultwarden - Server
-  type: Vaultwarden
-  logo: assets/tools/sample.png
-  url: http://vaultwarden.example.com
+- name: "Vaultwarden - Server"
+  type: "Vaultwarden"
+  logo: "assets/tools/sample.png"
+  url: "http://vaultwarden.example.com"
 ```
 
 ## Wallabag
