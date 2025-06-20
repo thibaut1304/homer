@@ -24,5 +24,6 @@ yarn-error.log*
 config.yml
 docker-87.yml
 docker-93.yml
+proxmox-page.yml
 
 .drone.yml
