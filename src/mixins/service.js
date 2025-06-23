@@ -1,3 +1,16 @@
+function needsPluginBackend(obj) {
+	if (typeof obj === 'string') {
+		return obj.startsWith('secret://');
+	}
+	if (Array.isArray(obj)) {
+		return obj.some(needsPluginBackend);
+	}
+	if (typeof obj === 'object' && obj !== null) {
+		return Object.values(obj).some(needsPluginBackend);
+	}
+	return false;
+}
+
 export default {
 	props: {
 		proxy: Object,
@@ -49,15 +62,8 @@ export default {
 			}
 
 			// Si plugin activé -> go backend
-			console.log(this.useSecretProxy)
-			if (this.useSecretProxy) {
-				const backendUrl = `http://localhost:8001/api-proxy/?service=${encodeURIComponent(this.item.name)}&url=${encodeURIComponent(url)}`;
-
-				// const proxyOptions = {
-				// 	method: options?.method,
-				// 	headers: options?.headers || {},
-				// 	...(options?.body && { body: options.body }),
-				// };
+			if (needsPluginBackend(this.item)) {
+				const backendUrl = `http://localhost:8001/api-proxy/?service=${encodeURIComponent(this.item.type)}&url=${encodeURIComponent(url)}`;
 
 				return fetch(backendUrl, options).then((response) => {
 					if (!response.ok) {
