@@ -12,12 +12,24 @@ load_dotenv()
 app = FastAPI()
 
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+	CORSMiddleware,
+	allow_origins=[
+		"http://localhost:8080",
+		"http://127.0.0.1:8080"
+	],
+	allow_credentials=True,
+	allow_methods=["*"],
+	allow_headers=["*"],
 )
+
+# class StrictOriginMiddleware(BaseHTTPMiddleware):
+#     async def dispatch(self, request: Request, call_next):
+#         origin = request.headers.get("origin") or request.headers.get("referer")
+#         if origin and not any(origin.startswith(trusted) for trusted in TRUSTED_ORIGINS):
+#             raise HTTPException(status_code=403, detail="Forbidden origin")
+#         return await call_next(request)
+
+# app.add_middleware(StrictOriginMiddleware)
 
 start_watcher()
 
@@ -86,7 +98,6 @@ async def proxy_query(service: str = Query(...), url: str = Query(...), request:
 
 	logger_api.debug(f":test_tube: Final headers sent to backend: {headers}")
 
-	# Récupère le corps brut
 	body = await request.body()
 
 	# Proxy HTTP brut
@@ -105,7 +116,6 @@ async def proxy_query(service: str = Query(...), url: str = Query(...), request:
 				content=body if body else None
 			)
 
-		# SUpprime header encore relou de la res
 		excluded_response_headers = {"content-length", "transfer-encoding", "content-encoding", "connection"}
 
 		response_headers = {
