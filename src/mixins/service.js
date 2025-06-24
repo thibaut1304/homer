@@ -63,7 +63,7 @@ export default {
 
 			// Si plugin activé -> go backend
 			if (needsPluginBackend(this.item)) {
-				const backendUrl = `http://localhost:8001/api-proxy/?service=${encodeURIComponent(this.item.type)}&url=${encodeURIComponent(url)}`;
+				const backendUrl = `/server/?service=${encodeURIComponent(this.item.type)}&url=${encodeURIComponent(url)}`;
 
 				return fetch(backendUrl, options).then((response) => {
 					if (!response.ok) {

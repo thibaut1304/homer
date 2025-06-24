@@ -22,5 +22,9 @@ yarn-error.log*
 
 # App configuration
 config.yml
+config_secret.yml
 
 .drone.yml
+
+**/__pycache__
+assets/
