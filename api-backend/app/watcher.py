@@ -1,11 +1,12 @@
 import os
 import threading
 import yaml
-from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver
+
 from watchdog.events import FileSystemEventHandler
 from logger import logger_api
 
-CONFIG_FILE = "config_secret.yml"
+CONFIG_FILE = "/app/config_secret.yml"
 _secrets_cache = {}
 _lock = threading.Lock()
 
@@ -37,7 +38,7 @@ def get_secrets():
 def start_watcher():
 	_reload_secrets()
 	event_handler = ConfigFileHandler()
-	observer = Observer()
+	observer = PollingObserver()
 	observer.schedule(event_handler, path=os.path.dirname(CONFIG_FILE) or ".", recursive=False)
 	observer.daemon = True
 	observer.start()
