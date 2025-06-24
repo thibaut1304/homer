@@ -1,0 +1,30 @@
+services:
+  homer:
+    build:
+      context: ./
+    container_name: homer
+    volumes:
+      - ./assets:/www/assets # Make sure your local config directory exists
+    ports:
+      - 8080:8080
+    user: 1000:1000 # default
+    networks:
+      - homer_net
+    environment:
+      - INIT_ASSETS=1 # default, requires the config directory to be writable for the container user (see user option)
+    restart: unless-stopped
+  homer-api-backend:
+    build:
+      context: ./api-backend
+    container_name: homer-api-backend
+    volumes:
+      - ./api-backend/config_secret.yml:/app/config_secret.yml:ro
+    networks:
+      - homer_net
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=DEBUG
+
+networks:
+  homer_net:
+    driver: bridge

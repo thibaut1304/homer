@@ -1,0 +1,7 @@
+pyyaml==6.0.1
+emoji==2.14.1
+fastapi==0.115.11
+httpx==0.28.1
+uvicorn==0.34.0
+watchdog==6.0.0
+dotenv==0.9.9

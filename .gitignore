@@ -27,3 +27,9 @@ docker-93.yml
 proxmox-page.yml
 
 .drone.yml
+config_secret.yml
+
+.drone.yml
+
+**/__pycache__
+assets/
