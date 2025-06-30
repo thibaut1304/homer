@@ -6,7 +6,7 @@ from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 from logger import logger_api
 
-CONFIG_FILE = "/app/config_secret.yml"
+CONFIG_FILE = "/app/secrets/config_secret.yml"
 _secrets_cache = {}
 _lock = threading.Lock()
 
