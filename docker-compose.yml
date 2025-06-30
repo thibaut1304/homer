@@ -21,6 +21,8 @@ services:
       - ./api-backend/config_secret.yml:/app/config_secret.yml:ro
     networks:
       - homer_net
+    # ports:
+      # - 8001:8001
     restart: unless-stopped
     environment:
       - LOG_LEVEL=DEBUG
