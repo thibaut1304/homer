@@ -23,7 +23,7 @@
         </template>
 
         <!-- Zigbee2MQTT metrics -->
-        <template v-else-if="mode === 'mqtt' && data">
+        <template v-else-if="mode === 'z2m' && data">
           <span class="margined">Version : {{ data.version }}</span>
           <span class="margined">Devices : {{ data.device_count }}</span>
         </template>
