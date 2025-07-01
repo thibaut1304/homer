@@ -15,15 +15,15 @@
 
         <!-- MQTT broker metrics -->
         <template v-else-if="mode === 'mqtt'" class="metrics" :class="margined">
-          <span class="margined">Version : <strong>{{ data.version }}</strong></span>
-          <span class="margined">Uptime : <strong>{{ data.uptime }}</strong></span>
-          <span class="margined">Clients : <strong>{{ data.active_clients }}</strong></span>
+          <span class="margined">Version : {{ data.version }}</span>
+          <span class="margined">Uptime : {{ data.uptime }}</span>
+          <span class="margined">Clients : {{ data.active_clients }}</span>
         </template>
 
         <!-- Zigbee2MQTT metrics -->
         <template v-else-if="mode === 'z2m'" class="metrics" :class="margined">
-          <span class="margined">Version : <strong>{{ data.version }}</strong></span>
-          <span class="margined">Devices : <strong>{{ data.device_count }}</strong></span>
+          <span class="margined">Version : {{ data.version }}</span>
+          <span class="margined">Devices : {{ data.device_count }}</span>
           <!-- <span v-if="data.commit" class="margined">Commit : <code>{{ data.commit.slice(0,7) }}</code></span> -->
         </template>
       </p>
