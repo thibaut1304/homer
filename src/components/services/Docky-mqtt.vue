@@ -16,14 +16,14 @@
           {{ item.subtitle }}
         </template>
         <!-- MQTT broker metrics -->
-        <template v-else-if="mode === 'mqtt'">
+        <template v-else-if="mode === 'mqtt' && data">
           <span class="margined">Version : {{ data.version }}</span>
           <span class="margined">Uptime : {{ data.uptime }}</span>
           <span class="margined">Clients : {{ data.active_clients }}</span>
         </template>
 
         <!-- Zigbee2MQTT metrics -->
-        <template v-else-if="mode === 'z2m'">
+        <template v-else-if="mode === 'mqtt' && data">
           <span class="margined">Version : {{ data.version }}</span>
           <span class="margined">Devices : {{ data.device_count }}</span>
         </template>
