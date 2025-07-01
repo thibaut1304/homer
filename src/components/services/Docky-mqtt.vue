@@ -6,25 +6,26 @@
 
       <!-- Body -->
       <p class="subtitle is-6">
-        <div v-if="loading">
+        <!-- <div v-if="loading">
           <strong>Loading…</strong>
         </div>
         <div v-else-if="error">
           <strong class="danger">Erreur</strong>
-        </div>
-
+        </div> -->
+        <template v-if="item.subtitle">
+          {{ item.subtitle }}
+        </template>
         <!-- MQTT broker metrics -->
-        <template v-else-if="mode === 'mqtt'" class="metrics" :class="margined">
+        <template v-else-if="mode === 'mqtt'">
           <span class="margined">Version : {{ data.version }}</span>
           <span class="margined">Uptime : {{ data.uptime }}</span>
           <span class="margined">Clients : {{ data.active_clients }}</span>
         </template>
 
         <!-- Zigbee2MQTT metrics -->
-        <template v-else-if="mode === 'z2m'" class="metrics" :class="margined">
+        <template v-else-if="mode === 'z2m'">
           <span class="margined">Version : {{ data.version }}</span>
           <span class="margined">Devices : {{ data.device_count }}</span>
-          <!-- <span v-if="data.commit" class="margined">Commit : <code>{{ data.commit.slice(0,7) }}</code></span> -->
         </template>
       </p>
     </template>
@@ -33,7 +34,7 @@
     <template #indicator>
       <i v-if="loading" class="fa fa-circle-notch fa-spin fa-2xl"></i>
       <i v-if="error" class="fa fa-exclamation-circle fa-2xl danger"></i>
-      <div v-else="status" class="status" :class="status">
+      <div v-else class="status" :class="status">
         {{ status }}
       </div>
     </template>
@@ -99,7 +100,7 @@ export default {
 
 <style scoped>
 .danger { color: red; }
-.metrics .margined:not(:first-child) { margin-left: 0.5rem; }
+.margined:not(:first-child) { margin-left: 0.5rem; }
 .status {
   font-size: 0.8rem;
   color: var(--text-title);
@@ -129,3 +130,5 @@ export default {
   }
 }
 </style>
+<!-- ok maintenant sur le pi j'aimerai qu'on fasse un peu de routage et qu'on configurer de sorte que les equipements chez ma soeur puisse communiquer a travers le vpn wg0 du pi
+en gros homeassistant -->
