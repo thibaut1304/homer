@@ -865,20 +865,6 @@ This service displays a version string instead of a subtitle. Example configurat
   url: https://wallabag.example.com
 ```
 
-## Wg-easy
-
-This service displays a version string instead of a subtitle.  
-If a new version is available, it will also be shown alongside the current one.  
-The indicator shows if Wg-easy is online, offline. Example configuration:
-
-```yaml
-- name: "Wireguard"
-  logo: assets/tools/sample.png
-  url:  http://wg-easy.example.com
-  type: Wg-easy
-  basic_auth: "admin:password"
-```
-
 ## What's up Docker
 
 What's up Docker allow to display info about the number of container running and the number for which an update is available on your Homer dashboard.
