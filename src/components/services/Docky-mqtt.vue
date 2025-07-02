@@ -130,5 +130,4 @@ export default {
   }
 }
 </style>
-<!-- ok maintenant sur le pi j'aimerai qu'on fasse un peu de routage et qu'on configurer de sorte que les equipements chez ma soeur puisse communiquer a travers le vpn wg0 du pi
-en gros homeassistant -->
+
