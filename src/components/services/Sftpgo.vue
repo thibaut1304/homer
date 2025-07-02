@@ -8,7 +8,7 @@
         </template>
         <template v-else>
           <span v-if="versionstring">Version {{ versionstring }}</span>
-          <span v-if="activeConnections !== null">
+          <span v-if="activeConnections !== null && !this.showUpdateAvailable">
             – Active connections: {{ activeConnections }}
           </span>
         </template>
@@ -40,27 +40,34 @@ export default {
     status: function () {
       return this.fetchOk ? "online" : "offline";
     },
+    showUpdateAvailable: function () {
+      return this.isSmallScreenMethod();
+    },
   },
   created() {
     this.fetchStatus();
   },
   methods: {
+    isSmallScreenMethod: function () {
+      return window.matchMedia("screen and (max-width: 1023px)").matches;
+    },
     fetchStatus: async function () {
       let headers = {};
       if (this.item.sftpgo_api_key) {
         headers["X-SFTPGO-API-KEY"] = `${this.item.sftpgo_api_key}`;
       }
       try {
-        const response = await this.fetch("/api/v2/version", { headers });
-        this.versionstring = response.version || "inconnue";
+        const [versionRes, connRes] = await Promise.all([
+          this.fetch("/api/v2/version", { headers }),
+          this.fetch("/api/v2/connections", { headers }),
+        ]);
 
-        const connResponse = await this.fetch("/api/v2/connections", { headers });
-        this.activeConnections = Array.isArray(connResponse) ? connResponse.length : null;
+        this.versionstring = versionRes.version || "unknown";
+        this.activeConnections = connRes.length;
 
         this.fetchOk = true;
       } catch (e) {
         this.fetchOk = false;
-        console.log(e);
       }
     },
   },
