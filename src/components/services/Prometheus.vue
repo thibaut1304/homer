@@ -6,6 +6,7 @@
         <template v-if="item.subtitle">
           {{ item.subtitle }}
         </template>
+        <template v-else-if="version">Version {{ version }} - </template>
         <template v-else-if="api"> {{ count }} {{ level }} alerts </template>
       </p>
     </template>
@@ -42,8 +43,12 @@ export default {
         pending: 0,
       },
     },
+    build: null,
   }),
   computed: {
+    version() {
+      return this.build?.data?.version || null;
+    },
     count: function () {
       return (
         this.countFiring() || this.countPending() || this.countInactive() || 0
@@ -68,7 +73,16 @@ export default {
         const encodedCredentials = btoa(this.item.basic_auth);
         headers["Authorization"] = `Basic ${encodedCredentials}`;
       }
-      this.api = await this.fetch("api/v1/alerts", {headers} ).catch((e) => console.log(e));
+      try {
+        const [alertsResp, buildResp] = await Promise.all([
+          this.fetch("api/v1/alerts", {headers}),
+          this.fetch("api/v1/status/buildinfo", {headers}),
+        ])
+        this.api   = alertsResp;
+        this.build = buildResp;
+      } catch (e) {
+        console.error(e)
+      }
     },
     countFiring: function () {
       if (this.api) {
@@ -89,7 +103,7 @@ export default {
     countInactive: function () {
       if (this.api) {
         return this.api.data?.alerts?.filter(
-          (alert) => alert.state === AlertsStatus.pending,
+          (alert) => alert.state === AlertsStatus.inactive,
         ).length;
       }
       return 0;
