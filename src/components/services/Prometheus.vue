@@ -63,7 +63,12 @@ export default {
   },
   methods: {
     fetchStatus: async function () {
-      this.api = await this.fetch("api/v1/alerts").catch((e) => console.log(e));
+      let headers = {};
+      if (this.item.basic_auth) {
+        const encodedCredentials = btoa(this.item.basic_auth);
+        headers["Authorization"] = `Basic ${encodedCredentials}`;
+      }
+      this.api = await this.fetch("api/v1/alerts", {headers} ).catch((e) => console.log(e));
     },
     countFiring: function () {
       if (this.api) {
