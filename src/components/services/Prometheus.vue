@@ -7,7 +7,7 @@
           {{ item.subtitle }}
         </template>
         <template v-else>
-          <span v-if="version">Version {{ version }} - </span>
+          <span v-if="version && !this.showVersionMobile">Version {{ version }} - </span>
           <span v-if="api">{{ count }} {{ level }} alerts</span>
         </template>
       </p>
@@ -36,21 +36,25 @@ export default {
     item: Object,
   },
   data: () => ({
-    api: {
-      status: "",
-      count: 0,
-      alerts: {
-        firing: 0,
-        inactive: 0,
-        pending: 0,
-      },
-    },
+    api: null,
+    //  {
+    //   status: "",
+    //   count: 0,
+    //   alerts: {
+    //     firing: 0,
+    //     inactive: 0,
+    //     pending: 0,
+    //   },
+    // },
     rules : null,   // /api/v1/rules
     build : null,   // /api/v1/status/buildinfo
   }),
   computed: {
     version() {
       return this.build?.data?.version || null;
+    },
+    showVersionMobile: function () {
+      return this.isSmallScreenMethod();
     },
     count: function () {
       return (
@@ -70,18 +74,26 @@ export default {
     this.fetchStatus();
   },
   methods: {
+    isSmallScreenMethod: function () {
+      return window.matchMedia("screen and (max-width: 1023px)").matches;
+    },
     fetchStatus: async function () {
       let headers = {};
       if (this.item.basic_auth) {
         const encodedCredentials = btoa(this.item.basic_auth);
         headers["Authorization"] = `Basic ${encodedCredentials}`;
       }
+      const promises = [
+        this.fetch("api/v1/alerts", { headers }),
+        this.fetch("api/v1/rules",  { headers }),
+      ];
+
+      /* buildinfo only on desktop */
+      if (!this.isSmallScreenMethod()) {
+        promises.push(this.fetch("api/v1/status/buildinfo", { headers }));
+      }
       try {
-        const [alertsResp, rulesResp, buildResp] = await Promise.all([
-          this.fetch("api/v1/alerts",           { headers }),
-          this.fetch("api/v1/rules",            { headers }),
-          this.fetch("api/v1/status/buildinfo", { headers }),
-        ])
+        const [alertsResp, rulesResp, buildResp = null] = await Promise.all(promises);
         this.api   = alertsResp;
         this.rules = rulesResp;
         this.build = buildResp;
