@@ -6,10 +6,10 @@
         <template v-if="item.subtitle">
           {{ item.subtitle }}
         </template>
-      <template v-else>
-        <span v-if="version">Version {{ version }} - </span>
-        <span v-if="api">{{ count }} {{ level }} alerts</span>
-      </template>
+        <template v-else>
+          <span v-if="version">Version {{ version }} - </span>
+          <span v-if="api">{{ count }} {{ level }} alerts</span>
+        </template>
       </p>
     </template>
     <template #indicator>
@@ -45,7 +45,8 @@ export default {
         pending: 0,
       },
     },
-    build: null,
+    rules : null,   // /api/v1/rules
+    build : null,   // /api/v1/status/buildinfo
   }),
   computed: {
     version() {
@@ -76,11 +77,13 @@ export default {
         headers["Authorization"] = `Basic ${encodedCredentials}`;
       }
       try {
-        const [alertsResp, buildResp] = await Promise.all([
-          this.fetch("api/v1/alerts", {headers}),
-          this.fetch("api/v1/status/buildinfo", {headers}),
+        const [alertsResp, rulesResp, buildResp] = await Promise.all([
+          this.fetch("api/v1/alerts",           { headers }),
+          this.fetch("api/v1/rules",            { headers }),
+          this.fetch("api/v1/status/buildinfo", { headers }),
         ])
         this.api   = alertsResp;
+        this.rules = rulesResp;
         this.build = buildResp;
       } catch (e) {
         console.error(e)
@@ -103,12 +106,11 @@ export default {
       return 0;
     },
     countInactive: function () {
-      if (this.api) {
-        return this.api.data?.alerts?.filter(
-          (alert) => alert.state === AlertsStatus.inactive,
-        ).length;
-      }
-      return 0;
+        return (this.rules?.data?.groups
+        ?.flatMap(g => g.rules ?? [])
+        ?.filter((r) => r.state === AlertsStatus.inactive)
+        ?.length || 0
+      );
     },
   },
 };
