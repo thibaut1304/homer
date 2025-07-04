@@ -6,8 +6,10 @@
         <template v-if="item.subtitle">
           {{ item.subtitle }}
         </template>
-        <template v-else-if="version">Version {{ version }} - </template>
-        <template v-else-if="api"> {{ count }} {{ level }} alerts </template>
+      <template v-else>
+        <span v-if="version">Version {{ version }} - </span>
+        <span v-if="api">{{ count }} {{ level }} alerts</span>
+      </template>
       </p>
     </template>
     <template #indicator>
