@@ -18,7 +18,7 @@
         <!-- MQTT broker metrics -->
         <template v-else-if="mode === 'mqtt' && data">
           <span class="margined">Version : {{ data.version }}</span>
-          <span class="margined">Uptime : {{ data.uptime }}</span>
+          <span v-if="!this.showVersionMobile" class="margined">Uptime : {{ data.uptime }}</span>
           <span class="margined">Clients : {{ data.active_clients }}</span>
         </template>
 
@@ -57,6 +57,9 @@ export default {
     error: false,
   }),
   computed: {
+    showVersionMobile: function () {
+      return this.isSmallScreenMethod();
+    },
     mode() {
       return (this.item.info || "mqtt").toLowerCase();
     },
@@ -75,6 +78,9 @@ export default {
     this.fetchData();
   },
   methods: {
+    isSmallScreenMethod: function () {
+      return window.matchMedia("screen and (max-width: 1023px)").matches;
+    },
     async fetchData() {
       let url;
       if (this.mode === "mqtt") {
