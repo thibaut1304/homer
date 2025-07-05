@@ -7,8 +7,8 @@
           {{ item.subtitle }}
         </template>
         <template v-else>
-          <span v-if="version && !this.showVersionMobile">Version {{ version }} - </span>
-          <span v-if="api">{{ count }} {{ level }} alerts</span>
+          <span v-if="version">Version {{ version }}</span>
+          <span v-if="api && !this.showVersionMobile"> - {{ count }} {{ level }} alerts</span>
         </template>
       </p>
     </template>
@@ -78,25 +78,26 @@ export default {
       return window.matchMedia("screen and (max-width: 1023px)").matches;
     },
     fetchStatus: async function () {
+      // headers works with only api-backend
       let headers = {};
       if (this.item.basic_auth) {
         const encodedCredentials = btoa(this.item.basic_auth);
         headers["Authorization"] = `Basic ${encodedCredentials}`;
       }
       const promises = [
-        this.fetch("api/v1/alerts", { headers }),
-        this.fetch("api/v1/rules",  { headers }),
+        this.fetch("api/v1/status/buildinfo", { headers }),
       ];
 
       /* buildinfo only on desktop */
       if (!this.isSmallScreenMethod()) {
-        promises.push(this.fetch("api/v1/status/buildinfo", { headers }));
+        promises.push(this.fetch("api/v1/alerts", { headers }));
+        promises.push(this.fetch("api/v1/rules", { headers }));
       }
       try {
-        const [alertsResp, rulesResp, buildResp = null] = await Promise.all(promises);
+        const [buildResp, alertsResp = null, rulesResp = null] = await Promise.all(promises);
+        this.build = buildResp;
         this.api   = alertsResp;
         this.rules = rulesResp;
-        this.build = buildResp;
       } catch (e) {
         console.error(e)
       }
