@@ -85,9 +85,10 @@
                 </div>
                 {{ group.name }}
               </h2>
+              <!-- :key="`service-${groupIndex}-${index}`" -->
               <Service
                 v-for="(item, index) in group.items"
-                :key="`service-${groupIndex}-${index}`"
+                :key="`${currentPage}-${group.name}-${item.name}`"
                 :item="item"
                 :proxy="config.proxy"
                 :class="[
@@ -118,9 +119,10 @@
                 </div>
                 {{ group.name }}
               </h2>
+              <!-- :key="index" -->
               <Service
                 v-for="(item, index) in group.items"
-                :key="index"
+                :key="`${currentPage}-${group.name}-${item.name}`"
                 :item="item"
                 :proxy="config.proxy"
                 :class="item.class || group.class"
