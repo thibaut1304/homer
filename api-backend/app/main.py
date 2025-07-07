@@ -5,9 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import base64
 from watcher import start_watcher, get_secrets
 from logger import logger_api
-
 from dotenv import load_dotenv
 load_dotenv()
+
+import os
+from distutils.util import strtobool
+
+TIMEOUT = bool(strtobool(os.getenv("TIMEOUT", "false")))
 
 app = FastAPI()
 
@@ -101,9 +105,18 @@ async def proxy_query(service: str = Query(...), url: str = Query(...), request:
 
 	body = await request.body()
 
+	timeout = httpx.Timeout()
+	if TIMEOUT:
+		timeout = httpx.Timeout(
+				connect=5.0,
+				read=15.0,
+				write=5.0,
+				pool=None,
+				)
+
 	# Proxy HTTP brut
 	try:
-		async with httpx.AsyncClient(verify=False) as client:
+		async with httpx.AsyncClient(timeout=timeout, verify=False) as client:
 			logger_api.debug(":incoming_envelope: Sending request to backend")
 			logger_api.debug(f"  :link: URL: {url}")
 			logger_api.debug(f"  :incoming_envelope: Method: {request.method}")
