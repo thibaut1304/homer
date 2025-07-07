@@ -91,7 +91,7 @@ async def proxy_query(service: str = Query(...), url: str = Query(...), request:
 		raise HTTPException(status_code=400, detail=f"No secret values defined for service '{service}'")
 
 	# Filter out unwanted headers
-	excluded_headers = {"host", "connection", "origin", "referer", "sec-fetch-mode", "sec-fetch-site", "sec-fetch-dest", "sec-fetch-user", "upgrade-insecure-requests", "pragma", "cache-control"}
+	excluded_headers = {"host", "connection", "origin", "referer", "sec-fetch-mode", "sec-fetch-site", "sec-fetch-dest", "sec-fetch-user", "upgrade-insecure-requests", "pragma", "cache-control", "accept-encoding"}
 	service_secrets_lower = {k.lower(): v for k, v in service_secrets.items()}
 	headers = {}
 
