@@ -105,7 +105,6 @@ async def proxy_query(service: str = Query(...), url: str = Query(...), request:
 
 	body = await request.body()
 
-	timeout = httpx.Timeout()
 	if TIMEOUT:
 		timeout = httpx.Timeout(
 				connect=5.0,
@@ -113,6 +112,8 @@ async def proxy_query(service: str = Query(...), url: str = Query(...), request:
 				write=5.0,
 				pool=None,
 				)
+	else:
+		timeout = httpx.Timeout(5.0)
 
 	# Proxy HTTP brut
 	try:
